@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cartas Sensuais</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000000;  /* fallback for old browsers */
+      background: linear-gradient(to right, #d10101, #600000);
+      color: #f8f8f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    #card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 4px 30px rgba(33, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    #card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      background-color: #ff4081;
+      color: white;
+      cursor: pointer;
+      margin-top: 2rem;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #e91e63;
+    }
+
+    img {
+      margin-top: 1rem;
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<audio id="musicaFundo" loop>
+    <source src="C:\Users\italo\Downloads\RetirarCard\𝗺𝘂́𝘀𝗶𝗰𝗮 𝗰𝗼𝗺 𝘁 𝗱𝗲 𝘁𝗲𝘀𝗮̃𝟬.mp3" type="audio/mp3">
+    Seu navegador não suporta o elemento de áudio.
+</audio>
+<div id="card"></div>
+<button onclick="retirarCarta()">Retirar Carta</button>
+
+<script>
+  const cartas = [
+{
+titulo: "1. Carta do Prazer Lento",
+descricao: "Vista uma lingerie leve e aproxime-se dele lentamente, com um olhar sedutor. Beije-o devagar, explorando cada canto da boca, e passe as mãos suavemente pelo corpo dele, como se cada toque fosse uma promessa de prazer prolongado.",
+imagem: "https://exemplo.com/imagem1.jpg"
+},
+{
+titulo: "2. Desejo Oculto",
+descricao: "Sente-se ao lado dele em um ambiente à meia-luz, use um tom baixo e confidencial, e revele uma fantasia proibida que nunca compartilhou. Descreva cada detalhe com um sussurro, enquanto roça de leve a perna dele, criando um clima de segredo ardente.",
+imagem: "https://exemplo.com/imagem2.jpg"
+},
+{
+titulo: "3. Banho Tentador",
+descricao: "Convide-o para um banho quente com velas ao redor. Deixe a água escorrer enquanto explora o corpo dele com as mãos ensaboadas, focando em carícias lentas e provocantes, sussurrando o quanto ele te excita sob o vapor.",
+imagem: "https://exemplo.com/imagem3.jpg"
+},
+{
+titulo: "4. Toque Prolongado",
+descricao: "Prepare um ambiente com música suave e óleo de massagem. Peça para ele deitar e faça uma massagem íntima, deslizando as mãos lentamente pelas costas, coxas e áreas sensíveis, sussurrando o quanto você adora tocá-lo.",
+imagem: "https://exemplo.com/imagem4.jpg"
+},
+{
+titulo: "5. Dança Provocante",
+descricao: "Coloque uma música sensual, vista algo que realce suas curvas, como um vestido colado, e dance para ele com movimentos lentos e provocantes. Aproxime-se, roce nele e mantenha contato visual, como se o estivesse seduzindo pela primeira vez.",
+imagem: "https://exemplo.com/imagem5.jpg"
+},
+{
+titulo: "6. Sussurros no Escuro",
+descricao: "Apague as luzes e sente-se bem perto dele no escuro. Sussurre no ouvido dele frases safadas, como 'Quero sentir você agora', enquanto passa os dedos levemente pelo pescoço e peito, criando um clima de desejo intenso.",
+imagem: "https://exemplo.com/imagem6.jpg"
+},
+{
+titulo: "7. Encontro às Cegas",
+descricao: "Venda os olhos dele com uma faixa de seda e guie-o para a cama. Explore o corpo dele com toques suaves, beijos e mordidas leves, deixando-o adivinhar cada movimento, enquanto sussurra 'Você não sabe o que vem agora'.",
+imagem: "https://exemplo.com/imagem7.jpg"
+},
+{
+titulo: "8. A Entrega",
+descricao: "Deite-se de forma vulnerável e diga a ele 'Hoje você manda'. Deixe-o conduzir cada toque e movimento, respondendo com gemidos suaves e entregando-se completamente, como se estivesse rendida ao desejo dele.",
+imagem: "https://exemplo.com/imagem8.jpg"
+},
+{
+titulo: "9. O Jantar Apimentado",
+descricao: "Prepare um jantar íntimo com velas e escolha alimentos como morangos ou chantilly. Passe os ingredientes no corpo dele, como no pescoço ou peito, e lamba lentamente, sussurrando o quanto o sabor dele te excita.",
+imagem: "https://exemplo.com/imagem9.jpg"
+},
+{
+titulo: "10. Beijo Proibido",
+descricao: "Aproxime-se dele com urgência, como se fosse um momento roubado. Beije-o profundamente, com paixão, segurando o rosto dele e dizendo 'Isso é nosso segredo', como se fosse a última vez que pudessem se tocar.",
+imagem: "https://exemplo.com/imagem10.jpg"
+},
+{
+titulo: "11. Strip-Tease Surpresa",
+descricao: "Escolha uma roupa sexy com várias camadas e surpreenda-o com um strip-tease. Tire cada peça lentamente ao som de uma música sensual, mantendo contato visual e provocando com gestos, como se fosse um show só para ele.",
+imagem: "https://exemplo.com/imagem11.jpg"
+},
+{
+titulo: "12. Gemidos Baixos",
+descricao: "Desafie-se a fazer amor em silêncio total. Deite-se com ele na cama, mova-se lentamente e mantenha olhares intensos, suprimindo gemidos enquanto a tensão aumenta, como se estivessem escondendo o prazer de alguém.",
+imagem: "https://exemplo.com/imagem12.jpg"
+},
+{
+titulo: "13. Mordidas e Carícias",
+descricao: "Aproxime-se dele com um olhar travesso e explore o corpo dele com mordidas suaves no pescoço, orelhas e coxas, alternando com carícias lentas. Sussurre 'Você gosta quando eu faço isso, não é?' enquanto intensifica os toques.",
+imagem: "https://exemplo.com/imagem13.jpg"
+},
+{
+titulo: "14. Espelho Testemunha",
+descricao: "Posicione um espelho grande na frente da cama. Faça amor olhando para o reflexo de vocês, descrevendo o que vê em um tom provocante, como 'Olha como ficamos bem juntos', enquanto explora o corpo dele.",
+imagem: "https://exemplo.com/imagem14.jpg"
+},
+{
+titulo: "15. Linguagem Corporal",
+descricao: "Sem dizer uma palavra, seduza-o apenas com toques e olhares. Passe as mãos pelo corpo dele, começando pelo peito e descendo lentamente, mantendo um olhar fixo e intenso, como se estivesse falando através do toque.",
+imagem: "https://exemplo.com/imagem15.jpg"
+},
+{
+titulo: "16. Roleplay",
+descricao: "Escolha personagens, como uma enfermeira sexy ou um estranho sedutor. Vista-se para o papel, entre no personagem e interprete uma noite de sedução, com diálogos provocantes como 'Você não me conhece, mas vai querer'.",
+imagem: "https://exemplo.com/imagem16.jpg"
+},
+{
+titulo: "17. Surpresa na Cozinha",
+descricao: "Chame-o para a cozinha com uma roupa provocante, como apenas um avental. Use a bancada como cenário, roçando nele enquanto 'prepara algo', e seduza-o com beijos e toques, dizendo 'Aqui é mais quente que o fogão'.",
+imagem: "https://exemplo.com/imagem17.jpg"
+},
+{
+titulo: "18. Recado Picante",
+descricao: "Escreva uma mensagem sexy, como 'Quero você agora', em um bilhete. Esconda-o no bolso dele ou na cama, e quando ele encontrar, provoque-o com olhares e toques, levando-o para um momento ardente.",
+imagem: "https://exemplo.com/imagem18.jpg"
+},
+{
+titulo: "19. Sexo Silencioso",
+descricao: "Desafie-se a fazer amor sem emitir nenhum som. Crie um ambiente íntimo com luz baixa, mova-se lentamente na cama, e use apenas olhares e toques para expressar o desejo, como se estivessem escondendo de todos.",
+imagem: "https://exemplo.com/imagem19.jpg"
+},
+{
+titulo: "20. Combinação de Sentidos",
+descricao: "Venda os olhos dele com uma faixa e pegue alimentos como chocolate ou frutas. Passe-os no corpo dele, deixando-o sentir o sabor e a textura, enquanto sussurra 'Você já provou algo assim?' para excitar os sentidos.",
+imagem: "https://exemplo.com/imagem20.jpg"
+},
+{
+titulo: "21. Audiodescrição Erótica",
+descricao: "Enquanto o toca, descreva cada movimento em detalhes com uma voz sensual, como 'Estou passando a mão pela sua coxa, sentindo você arrepiar'. Deixe as palavras guiarem a fantasia, intensificando cada carícia.",
+imagem: "https://exemplo.com/imagem21.jpg"
+},
+{
+titulo: "22. Despertar Matinal",
+descricao: "Acorde-o de manhã com beijos suaves no pescoço e peito. Deslize as mãos pelo corpo dele sob os lençóis, sussurrando 'Bom dia, amor, quero começar assim', e deixe o desejo tomar conta do momento.",
+imagem: "https://exemplo.com/imagem22.jpg"
+},
+{
+titulo: "23. Sombra e Luz",
+descricao: "Apague as luzes e use uma lanterna ou celular para iluminar partes do seu corpo. Explore o corpo dele com toques e beijos nas áreas iluminadas, sussurrando 'Você já viu isso tão de perto?' para criar um clima misterioso.",
+imagem: "https://exemplo.com/imagem23.jpg"
+},
+{
+titulo: "24. Jogo de Controle",
+descricao: "Alternem quem dá as ordens a cada cinco minutos. Comece dizendo 'Agora você faz o que eu quero', e guie os toques ou posições. Troquem papéis com um olhar provocante, mantendo o jogo de poder intenso.",
+imagem: "https://exemplo.com/imagem24.jpg"
+},
+{
+titulo: "25. Vontade Incontrolável",
+descricao: "Aja com urgência, como se não pudesse esperar. Puxe-o para você, rasgue uma peça de roupa (com cuidado) e diga 'Não aguento mais, preciso de você agora', beijando-o com paixão desenfreada.",
+imagem: "https://exemplo.com/imagem25.jpg"
+},
+{
+titulo: "26. Gula",
+descricao: "Pegue algo comestível, como mel ou chocolate, e espalhe no corpo dele, como no abdômen ou pescoço. Lamba lentamente, olhando nos olhos dele, e diga 'Você é mais gostoso que isso' para intensificar o momento.",
+imagem: "https://exemplo.com/imagem26.jpg"
+},
+{
+titulo: "27. Fantasia Proibida",
+descricao: "Compartilhe uma fantasia ousada, como um encontro secreto com um estranho. Vista-se para a cena, interprete com diálogos provocantes como 'Você sabe que isso é errado, mas quer', e mergulhe na fantasia juntos.",
+imagem: "https://exemplo.com/imagem27.jpg"
+},
+{
+titulo: "28. A Dama e o Lobo",
+descricao: "Um de vocês guia com autoridade, enquanto o outro se entrega. Se for a 'dama', seduza com charme; se for o 'lobo', seja dominante com toques firmes. Diga 'Você é meu agora' para marcar o papel.",
+imagem: "https://exemplo.com/imagem28.jpg"
+},
+{
+titulo: "29. Ordem do Dia",
+descricao: "Escolha quem manda a noite toda. O dominante dá ordens como 'Deite-se' ou 'Toque-me aqui', enquanto o outro obedece com olhares submissos, criando um jogo de poder intenso e excitante.",
+imagem: "https://exemplo.com/imagem29.jpg"
+},
+{
+titulo: "30. Desafio de Confiança",
+descricao: "Escolham algo novo, como uma posição ou acessório nunca usado. Explorem juntos com calma, sussurrando 'Confia em mim, vai ser incrível', e deixem o momento fluir com descoberta e desejo.",
+imagem: "https://exemplo.com/imagem30.jpg"
+},
+{
+titulo: "31. O Convite",
+descricao: "Envie uma mensagem sexy pelo celular, como 'Te espero no quarto, sem roupa'. Quando ele chegar, receba-o com uma lingerie provocante e um beijo ardente, puxando-o para um momento de pura sedução.",
+imagem: "https://exemplo.com/imagem31.jpg"
+},
+{
+titulo: "32. Improviso Selvagem",
+descricao: "Pegue um objeto do quarto, como uma pena ou cinto, e use-o para provocar a pele dele. Explore com toques criativos, sussurrando 'Você não esperava por isso, né?', mantendo o clima espontâneo e safado.",
+imagem: "https://exemplo.com/imagem32.jpg"
+},
+{
+titulo: "33. O Silêncio Fala",
+descricao: "Sem dizer uma palavra, seduza-o com gestos e olhares intensos. Aproxime-se lentamente, passe as mãos pelo corpo dele e beije-o com paixão, deixando apenas o silêncio e os toques falarem por vocês.",
+imagem: "https://exemplo.com/imagem33.jpg"
+},
+{
+titulo: "34. Sinta Minha Falta",
+descricao: "Passe o dia provocando-o com olhares e toques sutis, sem ceder. À noite, puxe-o para você e diga 'Você sentiu minha falta, não é?', intensificando o desejo com beijos e carícias ardentes.",
+imagem: "https://exemplo.com/imagem34.jpg"
+},
+{
+titulo: "35. Brinquedo Misterioso",
+descricao: "Escolha um acessório surpresa, como algemas ou um vibrador, e mostre a ele com um olhar safado. Use-o para provocá-lo, dizendo 'Vamos ver o que isso faz com você', e explore novas sensações juntos.",
+imagem: "https://exemplo.com/imagem35.jpg"
+},
+{
+titulo: "36. Comando à Distância",
+descricao: "Envie mensagens durante o dia com ordens sensuais, como 'Quero você deitado às 22h'. Quando chegar a hora, receba-o com um toque dominante e diga 'Você obedeceu direitinho, agora é minha vez'.",
+imagem: "https://exemplo.com/imagem36.jpg"
+},
+{
+titulo: "37. No Lugar Proibido",
+descricao: "Escolha um lugar ousado, como o sofá da sala. Vista algo provocante e seduza-o ali, sussurrando 'Aqui é mais perigoso, não acha?', while explora o corpo dele com toques intensos.",
+imagem: "https://exemplo.com/imagem37.jpg"
+},
+{
+titulo: "38. Memória Quente",
+descricao: "Sente-se com ele à meia-luz e conte uma lembrança erótica real ou fictícia, como 'Lembra aquela vez no carro?'. Descreva cada detalhe com voz sensual, enquanto o toca para reacender o desejo.",
+imagem: "https://exemplo.com/imagem38.jpg"
+},
+{
+titulo: "39. Dominante ou Submisso?",
+descricao: "Decidam quem será o dominante. O dominante guia com ordens como 'Tire a roupa agora', enquanto o submisso obedece com olhares provocantes. Troquem papéis no meio, se quiserem, para aquecer ainda mais.",
+imagem: "https://exemplo.com/imagem39.jpg"
+},
+{
+titulo: "40. Feitiço da Tentação",
+descricao: "Use um perfume afrodisíaco e aproxime-se dele com um olhar sedutor. Passe o perfume no pescoço e pulsos, e diga 'Cheire isso e me diga o que sente', enquanto o provoca com toques leves e beijos.",
+imagem: "https://exemplo.com/imagem40.jpg"
+},
+{
+titulo: "41. Cena de Filme",
+descricao: "Escolha uma cena sexy de um filme, como um encontro ardente. Vista-se como o personagem e recrie a cena com diálogos provocantes, como 'Você não devia estar aqui, mas agora é tarde', e mergulhe na fantasia.",
+imagem: "https://ei.phncdn.com/videos/202405/14/452458621/original/(m=qO71NKZbeaSaaTbaAaaaa)(mh=adezOiiqSo5S5to0)0.jpg"
+},
+{
+titulo: "42. Como Se Fosse a Primeira Vez",
+descricao: "Finja que acabaram de se conhecer. Vista algo sexy, flerte com olhares e frases como 'Você sempre olha assim para estranhos?', e seduza-o com beijos e toques como se fosse o primeiro encontro.",
+imagem: "https://st4n.depositphotos.com/20363444/30953/i/450/depositphotos_309539920-stock-photo-cropped-view-sexy-man-undressing.jpg"
+},
+{
+titulo: "43. Só com a Boca",
+descricao: "Explore o corpo dele apenas com beijos e mordidas, sem usar as mãos. Comece pelo pescoço, desça pelo peito e coxas, e sussurre 'Você já sentiu minha boca assim?' para intensificar o prazer.",
+imagem: "https://exemplo.com/imagem43.jpg"
+},
+{
+titulo: "44. Acompanhante de Luxo",
+descricao: "Vista algo elegante e sensual, como um vestido de gala, e finja ser uma acompanhante contratada. Seduza-o com charme, dizendo 'Você pagou pelo melhor, agora me mostre o que quer', e entregue-se ao papel.",
+imagem: "https://www.vipteresina.com/acompanhantes-teresina/wp-content/uploads/2025/06/1749600275.webp"
+},
+{
+titulo: "45. Tentação na Janela",
+descricao: "Aproxime-se de uma janela à noite, vestindo apenas lingerie. Chame-o e faça poses provocantes, sussurrando 'E se alguém estiver olhando?', enquanto o puxa para um momento ardente contra o vidro.",
+imagem: "https://www.sexocasual.net.br/blog/wp-content/uploads/2015/09/transando-na-janela.jpg"
+},
+{
+titulo: "46. Rotina Quebrada",
+descricao: "Surpreenda-o em um momento inesperado, como durante o café da manhã. Vista algo sexy, puxe-o para um canto e diga 'Esqueça tudo, agora é só nós dois', começando com beijos intensos e toques ousados.",
+imagem: "https://image-cdn.boafoda.porn/thumbs/2019/12/328260/640x360/5.jpg"
+},
+{
+titulo: "47. Roupas do Outro",
+descricao: "Vista uma camisa dele, deixando-a semiaberta, e nada mais. Aproxime-se com um olhar safado, dizendo 'Fica melhor em mim, não acha?', e provoque-o com carícias enquanto usa a roupa dele.",
+imagem: "https://cdn77-pic.xvideos-cdn.com/videos/thumbs169poster/14/16/21/141621055bf7c06359574841077750b8-2/141621055bf7c06359574841077750b8.10.jpg"
+},
+{
+titulo: "48. Carta Coringa",
+descricao: "Escolha qualquer desejo ou fantasia sem regras. Surpreenda-o com algo inesperado, como uma dança sensual ou um acessório novo, e diga 'Hoje sou eu quem decide tudo', guiando o momento com ousadia.",
+imagem: "https://img.ifunny.co/images/d4d0f28c98bc4d98aaedd1ac277a807553a6deb4a1547862733fa1084713e912_1.jpg"
+},
+{
+titulo: "49. Linguagem Secreta",
+descricao: "Criem um sinal secreto, como um toque no ombro, para iniciar a sedução. Use-o durante o dia, e à noite, sussurre 'Você entendeu o sinal, agora vem comigo', levando-o para um momento íntimo e conspirador.",
+imagem: "https://fly.metroimg.com/upload/q_85,w_1200/https://uploads.metroimg.com/wp-content/uploads/2022/11/01174737/Figurinhas-sexo-4.jpgs://exemplo.com/imagem49.jpg"
+},
+{
+titulo: "50. No Controle Remoto",
+descricao: "Use um brinquedo de controle remoto e entregue o controle a ele. Vista algo provocante e deixe-o decidir quando ativar, sussurrando 'Você tem o poder, o que vai fazer comigo?' enquanto a tesão aumenta.",
+imagem: "https://ei.phncdn.com/videos/202306/26/434307231/original/(m=eaSaaTbaAaaaa)(mh=6436k5dUWOrqKb7f)5.jpghttps://exemplo.com/imagem50.jpg"
+},
+{
+titulo: "51. Filha Safada",
+descricao: "Vista uma roupa curta e provocante, como uma saia plissada, e finja ser a 'filha travessa'. Aproxime-se dele com olhares maliciosos, sente no colo e sussurre provocações atrevidas, como se estivesse desafiando os limites de um segredo proibido.",
+imagem: "https://gcore-pic.xnxx-cdn.com/videos/thumbs169xnxxll/a3/4f/6a/a34f6a41f012a08179631486e0217477/a34f6a41f012a08179631486e0217477.15.jpghttps://exemplo.com/imagem51.jpg"
+},
+{
+titulo: "52. Nome Proibido",
+descricao: "Ajoelhe-se lentamente na frente dele, com um olhar de desejo intenso. Enquanto o chupa, chame-o por um nome fictício, como 'Lucas' ou 'Rafael', e finja que é um estranho que você deseja em segredo, sussurrando frases como 'Você não deveria estar aqui, mas não resisto'.",
+imagem: "https://s52.erome.com/3740/t9bPRvzn/w3NuSZHd.jpeg?v=1734292415"
+},
+{
+titulo: "53. Caso Ilícito",
+descricao: "Vista algo sensual, como uma lingerie escondida sob um robe, e finja que é uma amante proibida. Puxe-o para um canto escuro do quarto, sussurre que 'ninguém pode saber' и provoque com beijos ardentes e toques furtivos, como se estivessem traindo às escondidas.",
+imagem: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdJly0JnXRT3jOWP3RXKb8PdEMSwNnl7scAw&s"
+},
+{
+titulo: "54. Castigo Merecido",
+descricao: "Coloque uma roupa justa e finja que foi 'má' ao desobedecer uma regra imaginária. Incline-se provocativamente e peça a ele um castigo leve, como palmadas suaves nas nádegas, enquanto geme baixinho e diz 'Eu mereço isso, não é, amor?'.",
+imagem: "https://cdn77-pic.xvideos-cdn.com/videos/thumbslll/f1/f3/f3/f1f3f357d5289b848445ec313808dff0/f1f3f357d5289b848445ec313808dff0.14.jpg"
+},
+{
+titulo: "55. Amante Secreta",
+descricao: "Use um perfume marcante e vista algo elegante, como um vestido colado. Finja ser uma amante secreta que o encontra em um hotel proibido. Seduza-o com carícias lentas e sussurros como 'Você já deveria estar em casa, mas está aqui comigo', mantendo o clima de segredo.",
+imagem: "https://playblog.ws/play/wp-content/uploads/2017/09/Esposa-fazendo-sexo-com-amante-10.jpg"
+},
+{
+titulo: "56. Jogo de Submissão",
+descricao: "Pegue uma echarpe ou lenço e deixe-o amarrar suas mãos atrás das costas. Fique de joelhos ou deitada, olhando nos olhos dele, e diga 'Faça o que quiser comigo'. Deixe-o guiar cada movimento, respondendo com gemidos suaves para intensificar a fantasia.",
+imagem: "https://xplastic.com.br/blog/wp-content/uploads/2020/08/Submissive-Women3.jpg"
+},
+{
+titulo: "57. Provocação Pública",
+descricao: "Vista uma roupa sensual que poderia passar por 'casual' e finja que estão em um bar lotado. Roce nele disfarçadamente, passe a mão por baixo da mesa e sussurre provocações como 'Se alguém nos pegar, estamos perdidos'. Mantenha o clima de risco e sedução.",
+imagem: "https://conteudo.imguol.com.br/c/entretenimento/4b/2020/02/25/sexo-no-carro-1582653183543_v2_450x600.jpg"
+},
+{
+titulo: "58. Sogra Provocante",
+descricao: "Use uma roupa elegante e madura, como um vestido justo, e finja ser a sogra sedutora. Aproxime-se dele enquanto 'arruma a casa', roçando de leve, e sussurre coisas como 'Você sempre me olhou diferente, não é?'. Provoque com toques ousados, mantendo o segredo da fantasia.",
+imagem: "https://pbs.twimg.com/media/DriBFqdX0AABzeM.jpg"
+},
+{
+titulo: "59. Encontro Clandestino",
+descricao: "Transforme o quarto em um esconderijo secreto: apague as luzes, use velas. Vista algo provocante e finja que é um encontro proibido com um amante. Puxe-o para a cama e diga 'Temos que ser rápidos antes que ela chegue', enquanto o seduz com beijos intensos e toques urgentes.",
+imagem: "https://heroero.com/contents/videos_screenshots/4000/4772/preview.jpg"
+},
+{
+titulo: "60. Papai Gostoso",
+descricao: "Vista uma roupa jovial, como um shortinho e top, e chame-o de 'papai' com um tom provocante. Comece sussurrando obscenidades como 'Papai, você sabe que eu quero você' e continue com frases picantes enquanto o provoca com carícias lentas e olhares safados do início ao fim.",
+imagem: "https://xvideosfoda.com/wp-content/uploads/2019/02/Filha-dando-para-o-seu-papai-safado-796.jpg"
+}
+  ];
+
+  function retirarCarta() {
+    const pesos = cartas.map((_, i) => (i >= 28 && i <= 48 ? 1.0005 : 1));
+    const totalPeso = pesos.reduce((acc, val) => acc + val, 0);
+    let r = Math.random() * totalPeso;
+    let acumulador = 0;
+    let indexEscolhido = 0;
+
+    for (let i = 0; i < pesos.length; i++) {
+      acumulador += pesos[i];
+      if (r < acumulador) {
+        indexEscolhido = i;
+        break;
+      }
+    }
+
+    const carta = cartas[indexEscolhido];
+    const cardElement = document.getElementById('card');
+    cardElement.innerHTML = `
+      <h2>${carta.titulo}</h2>
+      <p>${carta.descricao}</p>
+      <img src="${carta.imagem}" alt="${carta.titulo}" />
+    `;
+
+    cardElement.classList.remove('show');
+    setTimeout(() => cardElement.classList.add('show'), 50);
+  }
+
+  // Partículas de fundo
+  const canvas = document.getElementById("particles");
+  const ctx = canvas.getContext("2d");
+  let particlesArray;
+
+  function initParticles() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    particlesArray = [];
+
+    const numberOfParticles = 80;
+    for (let i = 0; i < numberOfParticles; i++) {
+      particlesArray.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 1,
+        speedX: Math.random() * 1 - 0.5,
+        speedY: Math.random() * 1 - 0.5
+      });
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    particlesArray.forEach(p => {
+      p.x += p.speedX;
+      p.y += p.speedY;
+
+      if (p.x > canvas.width) p.x = 0;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.y > canvas.height) p.y = 0;
+      if (p.y < 0) p.y = canvas.height;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff33";
+      ctx.fill();
+    });
+
+    requestAnimationFrame(animateParticles);
+  }
+
+  initParticles();
+  animateParticles();
+  window.addEventListener('resize', () => {
+    initParticles();
+  });
+
+  // Controle da música de fundo
+  const audio = document.getElementById('musicaFundo');
+  audio.volume = 0.08; // Volume baixo (10%)
+  audio.play().catch(function(error) {
+    console.log("Autoplay bloqueado: ", error);
+    // Inicia no primeiro clique, se necessário
+    document.addEventListener('click', function() {
+      audio.play();
+    }, { once: true });
+  });
+</script>
+</body>
+</html>
